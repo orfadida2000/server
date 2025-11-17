@@ -20,8 +20,18 @@ app.get("/isAlive", (req, res) => {
 app.listen(port, async () => {
   startLogger()
   await connectToRedis()
-  connectToApn()
-  connectToFcm()
+  
+  // Disable APNs if no Apple credentials
+  if (process.env.APPLE_KEY_ID) {
+    connectToApn()
+  }
+  
+  // Disable Firebase if no credentials 
+  if (process.env.FIREBASE_ADMIN_AUTH) {
+    connectToFcm()
+  }
+
   scheduleExistingRides()
+
   logger.info(logNames.server.listening, { port, env })
 })
